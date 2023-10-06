@@ -4,14 +4,23 @@ const { NotFoundError, BadRequestError } = require('../errors');
 
 // Get ALl Jobs
 exports.getAllJobs = async (req, res, next) => {
-    const Jobs = await Job.find({ createdBy: req.user.userId }).sort('createdAt');
-    res.status(StatusCodes.OK).json({ Jobs, count: Jobs.length });
-    // res.send('All Jobs ...');
+    const jobs = await Job.find({ createdBy: req.user.userId }).sort('createdAt');
+    res.status(StatusCodes.OK).json({ jobs, count: jobs.length });
 }
 
 // Get Job
-exports.getJob = (req, res, next) => {
-    res.send('Get Specific Job ...');
+exports.getJob = async (req, res, next) => {
+    const { user: { userId }, params: { id } } = req;
+    const job = await Job.findOne({
+        _id: id,
+        createdBy: userId
+    });
+
+    if (!job) {
+        throw new NotFoundError(`No Job With This ID : ${id}`);
+    }
+
+    res.status(StatusCodes.OK).json({ job });
 }
 
 // Delete Job

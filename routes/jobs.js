@@ -9,7 +9,7 @@ router.route('/')
 
 router.route('/:id')
     .get(jobsController.getJob)
-    .patch(jobsController.editJob)
+    .patch(jobsController.updateJob)
     .delete(jobsController.deleteJob);
 
 

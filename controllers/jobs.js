@@ -29,8 +29,28 @@ exports.deleteJob = (req, res, next) => {
 }
 
 // Edit Job
-exports.editJob = (req, res, next) => {
-    res.send('Edit Specific Job ...');
+exports.updateJob = async (req, res, next) => {
+    const {
+        user: { userId },
+        params: { id },
+        body: { company, position }
+    } = req;
+
+    if (company === '' || position === '') {
+        throw new BadRequestError(`Company and Position can't be empty `)
+    }
+
+    const job = await Job.findOneAndUpdate(
+        { _id: id, createdBy: userId },
+        req.body,
+        { new: true, runValidators: true }
+    );
+
+    if (!job) {
+        throw new NotFoundError(`No Job With This ID : ${id}`);
+    }
+
+    res.status(StatusCodes.OK).json({ job });
 }
 
 // Create Job

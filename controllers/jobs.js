@@ -24,11 +24,24 @@ exports.getJob = async (req, res, next) => {
 }
 
 // Delete Job
-exports.deleteJob = (req, res, next) => {
-    res.send('Delete Specific Job ...');
+exports.deleteJob = async (req, res, next) => {
+    const {
+        user: { userId },
+        params: { id },
+    } = req;
+
+    const job = await Job.findOneAndDelete(
+        { _id: id, createdBy: userId }
+    );
+
+    if (!job) {
+        throw new NotFoundError(`No Job With This ID : ${id}`);
+    }
+
+    res.status(StatusCodes.OK).json({ job });
 }
 
-// Edit Job
+// Update Job
 exports.updateJob = async (req, res, next) => {
     const {
         user: { userId },

@@ -18,7 +18,11 @@ const auth = async (req, res, next) => {
         const payload = jwt.verify(token, process.env.JWT_SECRET);
 
         // Save User Data in Req.
-        req.user = { userId: payload.userId, name: payload.name };
+        const user = User.findById(payload.userId).select('-password')
+        req.user = user;
+
+        // req.user = { userId: payload.userId, name: payload.name };
+
         next();
     } catch (error) {
         throw new UnauthenticatedError('Invalid Authorization');

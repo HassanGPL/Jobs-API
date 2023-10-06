@@ -25,7 +25,6 @@ exports.login = async (req, res, next) => {
 
     // Compare Password
     const isCorrect = await user.comparePassword(password);
-
     if (!isCorrect) {
         throw new UnauthenticatedError(`The password you've entered is incorrect.`);
     }
@@ -33,6 +32,4 @@ exports.login = async (req, res, next) => {
     // Create Token
     const token = user.createJWT();
     res.status(StatusCodes.OK).json({ user: { name: user.name }, token });
-
-
 }
